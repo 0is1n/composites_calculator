@@ -53,7 +53,7 @@ svg text{fill:var(--ink);font:11px system-ui}svg .pt{fill:#10201c;font:600 13px 
 
 <div data-p="material">
 <section class="card"><h3>What do you know?</h3>
-<div class="seg" data-k="src"><button data-v="eng">E₁ E₂ ν₁₂ G₁₂</button><button data-v="Q">Q (1-2)</button><button data-v="S">S (1-2)</button><button data-v="Qb">Q̄ (x-y)</button><button data-v="Sb">S̄ (x-y)</button></div>
+<div class="seg" data-k="src"><button data-v="eng">E₁ E₂ μ₁₂ G₁₂</button><button data-v="Q">Q (1-2)</button><button data-v="S">S (1-2)</button><button data-v="Qb">Q̄ (x-y)</button><button data-v="Sb">S̄ (x-y)</button></div>
 <div class="g" id="eng" style="margin-top:12px"></div>
 <div class="g g3" id="gm" style="margin-top:12px"></div>
 <div class="thf"></div>
@@ -81,7 +81,7 @@ svg text{fill:var(--ink);font:11px system-ui}svg .pt{fill:#10201c;font:600 13px 
 <div class="seg" data-k="sym" style="margin-top:10px"><button data-v="0">Full stack as typed</button><button data-v="1">Mirror it (symmetric)</button></div>
 </div><div id="stk"></div></div></section>
 <section class="card"><h3>Load or deformation</h3>
-<div class="seg" data-k="lk"><button data-v="load">Load known (N, M)</button><button data-v="strain">Deformation known (ε⁰, κ)</button></div>
+<div class="seg" data-k="lk"><button data-v="load">Load known (q, m)</button><button data-v="strain">Deformation known (ε⁰, κ)</button></div>
 <div class="g g3" id="lN" style="margin-top:12px"></div><div class="g g3" id="lM"></div>
 <div id="zf" style="max-width:240px"></div><div class="n">z from the mid-plane, positive downward. Plies are counted from the top.</div></section>
 <div id="o-laminate"></div></div>
@@ -92,7 +92,7 @@ const S0={tab:'material',src:'eng',known:'stress',sys:'xy',lk:'load',su:'ue',sym
 const D={E1:19.755,E2:1.9755,nu:0.35,G:0.7,th:60,v0:-3.5,v1:7,v2:-1.4,layup:'45, 0',t:'3, 5',n0:0,n1:0,n2:0,m0:10,m1:0,m2:0,z:-2.5};
 for(let i=0;i<9;i++)D['g'+i]='';
 const F=(k,l,s)=>`<div class="f"><label id="l_${k}">${l}</label><div class="pr"><input data-k="${k}" inputmode="decimal" autocomplete="off">${s?'<button class="sg" aria-label="Change sign">±</button>':''}</div></div>`;
-$('#eng').innerHTML=F('E1','E₁ (GPa)')+F('E2','E₂ (GPa)')+F('nu','ν₁₂',1)+F('G','G₁₂ (GPa)');
+$('#eng').innerHTML=F('E1','E₁ (GPa)')+F('E2','E₂ (GPa)')+F('nu','μ₁₂',1)+F('G','G₁₂ (GPa)');
 $('#gm').innerHTML=[0,1,2,3,4,5,6,7,8].map(i=>F('g'+i,'',1)).join('');
 $('#lv').innerHTML=[0,1,2].map(i=>F('v'+i,'',1)).join('');
 $('#lN').innerHTML=[0,1,2].map(i=>F('n'+i,'',1)).join('');$('#lM').innerHTML=[0,1,2].map(i=>F('m'+i,'',1)).join('');
@@ -115,8 +115,8 @@ const pl=k=>$(`[data-k=${k}]`).value.split(/[\s,;/]+/).filter(Boolean).flatMap(x
 const k3=(M,f)=>M.map(r=>r.map(f));
 function mat(){const th=nv('th');if(isNaN(th))throw Error('Enter an angle θ.');const T=TT(th),{Ts,Te}=T;let Q,Sm,Qb,Sb;
  const g=()=>{const a=[0,1,2].map(i=>[0,1,2].map(j=>nv('g'+(3*i+j))));if(a.flat().some(isNaN))throw Error('Fill in all nine matrix entries.');return a};
- if(S.src=='eng'){const[E1,E2,n,G]=['E1','E2','nu','G'].map(nv);if([E1,E2,n,G].some(isNaN))throw Error('Enter E₁, E₂, ν₁₂ and G₁₂.');
-  if(E1<=0||E2<=0||G<=0)throw Error('E₁, E₂ and G₁₂ must be positive.');const d=1-n*n*E2/E1;if(d<=0)throw Error('ν₁₂ is too large: 1 − ν₁₂ν₂₁ must stay positive.');
+ if(S.src=='eng'){const[E1,E2,n,G]=['E1','E2','nu','G'].map(nv);if([E1,E2,n,G].some(isNaN))throw Error('Enter E₁, E₂, μ₁₂ and G₁₂.');
+  if(E1<=0||E2<=0||G<=0)throw Error('E₁, E₂ and G₁₂ must be positive.');const d=1-n*n*E2/E1;if(d<=0)throw Error('μ₁₂ is too large: 1 − μ₁₂μ₂₁ must stay positive.');
   Sm=[[1/E1,-n/E1,0],[-n/E1,1/E2,0],[0,0,1/G]];Q=[[E1/d,n*E2/d,0],[n*E2/d,E2/d,0],[0,0,G]]}
  else if(S.src=='Q'){Q=g();Sm=inv(Q)}else if(S.src=='S'){Sm=g();Q=inv(Sm)}
  else{if(S.src=='Qb'){Qb=g()}else{Sb=g();Qb=inv(Sb)}Q=mm(mm(Ts,Qb),inv(Te));Sm=inv(Q)}
@@ -146,7 +146,7 @@ function M(t,u,A,o={}){const R=Array.isArray(A[0])?A:A.map(x=>[x]),mx=Math.max(.
 const G=(c,x)=>`<div class="${c}">${x.join('')}</div>`;
 const TB=(h,rows)=>`<section class="card mat"><table class="ft"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table></section>`;
 const GPa=x=>k3(x,v=>v);
-function rMat(m){return TB(['E₁ (GPa)','E₂ (GPa)','ν₁₂','G₁₂ (GPa)','ν₂₁'],[[m.E1,m.E2,m.nu,m.G,m.nu*m.E2/m.E1].map(v=>fm(v))])+
+function rMat(m){return TB(['E₁ (GPa)','E₂ (GPa)','μ₁₂','G₁₂ (GPa)','μ₂₁'],[[m.E1,m.E2,m.nu,m.G,m.nu*m.E2/m.E1].map(v=>fm(v))])+
  G('g2',[M('Q','[GPa] 1-2',m.Q),M('S','[1/GPa] 1-2',m.S),M(`Q̄ (θ = ${fm(m.th)}°)`,'[GPa] x-y',m.Qb),M(`S̄ (θ = ${fm(m.th)}°)`,'[1/GPa] x-y',m.Sb)])}
 function rTr(m){const{Ts,Te}=m.T;return`<div class="n" style="margin:0 0 8px">cos θ = ${fm(m.T.m)}, sin θ = ${fm(m.T.n)}. σ₁₂ = Ts σxy and ε₁₂ = Te εxy, with engineering shear strain γ.</div>`+
  G('g2',[M('Ts','stress xy → 12',Ts),M('Te','strain xy → 12',Te),M('Ts⁻¹','stress 12 → xy',inv(Ts)),M('Te⁻¹','strain 12 → xy',inv(Te))])}
@@ -166,16 +166,16 @@ function fig(L,z){const hp=L.t.map(x=>Math.max(20,x/L.H*240)),top=[0];hp.forEach
  `</g></svg><div class="n">[${L.a0.map(x=>fm(x)).join('/')}]${S.sym=='1'?'s':''}, H = ${fm(L.H)} mm. Ply colour follows angle; numbers on the left are z in mm.</div>`}
 function rLmt(m){$('#stk').innerHTML='';const L=lam(m),z=nv('z');$('#stk').innerHTML=fig(L,z);
  const ev=['x','y','xy'],bz=Math.max(...L.B.flat().map(Math.abs)),az=Math.max(...L.A.flat().map(Math.abs));
- let o=G('g4',[M('ε⁰ mid-plane strain','[µε]',L.e0.map(x=>x*1e6),{r:ev}),M('κ curvature','[1/mm]',L.kp,{r:ev,sci:1}),M('N force flow','[N/mm]',L.NM.slice(0,3),{r:ev}),M('M moment flow','[N·mm/mm]',L.NM.slice(3),{r:ev})]);
+ let o=G('g4',[M('ε⁰ mid-plane strain','[µε]',L.e0.map(x=>x*1e6),{r:ev}),M('κ curvature','[1/mm]',L.kp,{r:ev,sci:1}),M('q force flow','[N/mm]',L.NM.slice(0,3),{r:ev}),M('m moment flow','[N·mm/mm]',L.NM.slice(3),{r:ev})]);
  if(!isNaN(z)){const k=L.a.findIndex((_,i)=>z>=L.h[i]&&(z<L.h[i+1]||i==L.a.length-1&&z<=L.h[i+1]));
   if(k<0)o+=`<div class="err">z = ${fm(z)} mm is outside the laminate (±${fm(L.H/2)} mm).</div>`;
   else{const r=L.st(k,z);o+=`<h3>Point at z = ${fm(z)} mm: ply ${k+1}, θ = ${fm(L.a[k])}°</h3>`+G('g4',[M('σ xy','[MPa]',r.sxy,{r:LB.stress.xy}),M('σ 1-2','[MPa]',r.s12,{r:LB.stress[12]}),M('ε xy','[µε]',r.exy.map(x=>x*1e6),{r:LB.strain.xy}),M('ε 1-2','[µε]',r.e12.map(x=>x*1e6),{r:LB.strain[12]})])}}
  o+=G('g2',[M('ABD','[[A,B],[B,D]]',L.ABD),M('abd = ABD⁻¹','',L.abd,{sci:1})])+G('g4',[M('A','[N/mm]',L.A),M('B','[N]',L.B),M('D','[N·mm]',L.D)]);
  const b=L.abd,H=L.H,te=[1/(H*b[0][0]),1/(H*b[1][1]),1/(H*b[2][2])].map(x=>fm(x/1e3)),be=[12/(H**3*b[3][3]),12/(H**3*b[4][4]),12/(H**3*b[5][5])].map(x=>fm(x/1e3));
- o+=TB(['Equivalent constants','Eₓ (GPa)','Eᵧ (GPa)','Gₓᵧ (GPa)','νₓᵧ','νᵧₓ'],[['Tensile (from a)',...te,fm(-b[0][1]/b[0][0]),fm(-b[0][1]/b[1][1])],['Bending (from d)',...be,fm(-b[3][4]/b[3][3]),fm(-b[3][4]/b[4][4])]])+
+ o+=TB(['Equivalent constants','Eₓ (GPa)','Eᵧ (GPa)','Gₓᵧ (GPa)','μₓᵧ','μᵧₓ'],[['Tensile (from a)',...te,fm(-b[0][1]/b[0][0]),fm(-b[0][1]/b[1][1])],['Bending (from d)',...be,fm(-b[3][4]/b[3][3]),fm(-b[3][4]/b[4][4])]])+
   (bz>1e-9*az*H?'<div class="n" style="margin:-6px 0 12px">B ≠ 0, so this laminate is not symmetric. The constants above only describe symmetric laminates.</div>':'');
- let rows=[];L.a.forEach((x,i)=>[L.h[i],L.h[i+1]].forEach(zz=>rows.push([i+1,fm(x)+'°',fm(zz),...L.st(i,zz).s12.map(v=>fm(v))])));
- o+=TB(['Ply','θ','z (mm)','σ₁ (MPa)','σ₂ (MPa)','τ₁₂ (MPa)'],rows);
+ const rows=L.a.map((x,i)=>{const z=(L.h[i]+L.h[i+1])/2,r=L.st(i,z);return[i+1,fm(x)+'°',fm(z),...r.sxy.map(v=>fm(v)),...r.s12.map(v=>fm(v)),...r.e12.map(v=>fm(v*1e6))]});
+ o+=`<h3>Mid-ply values <span class="u">at the middle of each ply</span></h3>`+TB(['Ply','θ','z mid (mm)','σx (MPa)','σy (MPa)','τxy (MPa)','σ₁ (MPa)','σ₂ (MPa)','τ₁₂ (MPa)','ε₁ (µε)','ε₂ (µε)','γ₁₂ (µε)'],rows);
  return o+`<details><summary>Matrices for each ply (Ts, Te, Q̄, S̄)</summary>${L.a.map((x,i)=>`<h3>Ply ${i+1}, θ = ${fm(x)}°</h3>`+G('g4',[M('Ts','',L.Tp[i].Ts),M('Te','',L.Tp[i].Te),M('Q̄','[MPa]',L.Qs[i]),M('S̄','[1/MPa]',inv(L.Qs[i]),{sci:1})])).join('')}</details>`}
 
 function ui(){$$('.seg button').forEach(b=>b.classList.toggle('on',S[b.parentElement.dataset.k]==b.dataset.v));
@@ -183,7 +183,7 @@ function ui(){$$('.seg button').forEach(b=>b.classList.toggle('on',S[b.parentEle
  const L=(k,t)=>{const e=$('#l_'+k);if(e)e.textContent=t},ix=['11','12','16','21','22','26','61','62','66'],nm={Q:'Q',S:'S',Qb:'Q̄',Sb:'S̄'}[S.src];
  ix.forEach((x,i)=>L('g'+i,nm+x.replace(/./g,c=>'₀₁₂₃₄₅₆₇₈₉'[c])));
  const lb=LB[S.known][S.sys];lb.forEach((x,i)=>L('v'+i,x+(S.known=='stress'?' (MPa)':S.su=='ue'?' (µε)':'')));
- (S.lk=='load'?['Nx (N/mm)','Ny (N/mm)','Nxy (N/mm)','Mx (N·mm/mm)','My (N·mm/mm)','Mxy (N·mm/mm)']:['ε⁰x (µε)','ε⁰y (µε)','γ⁰xy (µε)','κx (1/mm)','κy (1/mm)','κxy (1/mm)']).forEach((x,i)=>L((i<3?'n':'m')+i%3,x))}
+ (S.lk=='load'?['qx (N/mm)','qy (N/mm)','qxy (N/mm)','mx (N·mm/mm)','my (N·mm/mm)','mxy (N·mm/mm)']:['ε⁰x (µε)','ε⁰y (µε)','γ⁰xy (µε)','κx (1/mm)','κy (1/mm)','κxy (1/mm)']).forEach((x,i)=>L((i<3?'n':'m')+i%3,x))}
 function R(){cp.length=0;ui();$('#err').textContent='';const o=$('#o-'+S.tab);
  try{const m=mat();o.innerHTML={material:rMat,transform:rTr,lamina:rLam,laminate:rLmt}[S.tab](m)}catch(e){o.innerHTML='';$('#err').textContent=e.message}}
 const put=(k,v)=>$$(`[data-k=${k}]`).forEach(x=>x.value=v);
